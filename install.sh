@@ -17,6 +17,11 @@ if ! command -v starship >/dev/null; then
     curl -sS https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin"
 fi
 
+# --- herdr: Agent-Multiplexer, Einzel-Binary nach ~/.local/bin ---
+if ! command -v herdr >/dev/null; then
+    curl -fsSL https://herdr.dev/install.sh | sh
+fi
+
 # --- rustup/cargo: --no-modify-path, .profile sourced ~/.cargo/env selbst ---
 if [ ! -x "$HOME/.cargo/bin/cargo" ]; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
