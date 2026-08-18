@@ -9,7 +9,10 @@ need_apt=()
 command -v stow   >/dev/null || need_apt+=(stow)
 command -v direnv >/dev/null || need_apt+=(direnv)
 command -v curl   >/dev/null || need_apt+=(curl)
-[ ${#need_apt[@]} -eq 0 ] || sudo apt-get install -y "${need_apt[@]}"
+if [ ${#need_apt[@]} -gt 0 ]; then
+    sudo apt-get update
+    sudo apt-get install -y "${need_apt[@]}"
+fi
 
 # --- starship: Binary nach ~/.local/bin, fasst keine Configs an ---
 if ! command -v starship >/dev/null; then
