@@ -1,8 +1,4 @@
-# ~/.profile: executed by the command interpreter for login shells.
-# This file is not read by bash(1), if ~/.bash_profile or ~/.bash_login
-# exists.
-# see /usr/share/doc/bash/examples/startup-files for examples.
-# the files are located in the bash-doc package.
+# ~/.profile: executed by the command interpreter for login shells
 
 # the default umask is set in /etc/profile; for setting the umask
 # for ssh logins, install and configure the libpam-umask package.
@@ -10,7 +6,7 @@
 
 export COLORTERM=truecolor
 export VISUAL="code --wait"
-export CPM_SOURCE_CACHE=$HOME/.cache/CPM
+export CPM_SOURCE_CACHE="$HOME/.cache/CPM"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
@@ -42,22 +38,25 @@ fi
 
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
+  PATH="$HOME/bin:$PATH"
+fi
+if [ -d "$HOME/.local/bin" ] ; then
+  PATH="$HOME/.local/bin:$PATH"
 fi
 
 if [ -r "$HOME/.dotfiles/.local/profile.sh" ]; then
-    source "$HOME/.dotfiles/.local/profile.sh"
+  . "$HOME/.dotfiles/.local/profile.sh"
 fi
 
 if [ -n "$LITELLM_CLAUDE_KEY" ]; then
-    export ANTHROPIC_BASE_URL="https://litellm.piranha-banfish.ts.net"
-    export ANTHROPIC_CUSTOM_HEADERS="x-litellm-api-key: $LITELLM_CLAUDE_KEY"
+  export ANTHROPIC_BASE_URL="https://litellm.piranha-banfish.ts.net"
+  export ANTHROPIC_CUSTOM_HEADERS="x-litellm-api-key: $LITELLM_CLAUDE_KEY"
 fi
 
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
-    # include .bashrc if it exists
-    if [ -f "$HOME/.bashrc" ]; then
-	. "$HOME/.bashrc"
-    fi
+  # include .bashrc if it exists
+  if [ -f "$HOME/.bashrc" ]; then
+    . "$HOME/.bashrc"
+  fi
 fi
