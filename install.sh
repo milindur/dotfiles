@@ -25,6 +25,11 @@ if ! command -v herdr >/dev/null; then
     curl -fsSL https://herdr.dev/install.sh | sh
 fi
 
+# --- uv: Python-Paketmanager, Binary nach ~/.local/bin ---
+if ! command -v uv >/dev/null; then
+    curl -LsSf https://astral.sh/uv/install.sh | env INSTALLER_NO_MODIFY_PATH=1 sh
+fi
+
 # --- rustup/cargo: --no-modify-path, .profile sourced ~/.cargo/env selbst ---
 if [ ! -x "$HOME/.cargo/bin/cargo" ]; then
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
