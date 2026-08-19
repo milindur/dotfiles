@@ -65,6 +65,22 @@ if [ ! -x "$HOME/.bun/bin/bun" ]; then
     curl -fsSL https://bun.sh/install | bash
 fi
 
+# --- Agent-CLIs: pi + codex ---
+# beide bewusst nicht ueber ihre curl-Installer (chatgpt.com ist in der
+# Firmen-Firewall geblockt); die npm-Pakete ziehen das Plattform-Binary als
+# optionale Dependency. Pruefung jeweils auf den Ziel-Bin statt auf $PATH:
+# npm-globale Installationen haengen an der aktiven fnm-Node-Version und
+# wuerden hier faelschlich als "da" gelten.
+export PNPM_HOME="$HOME/.local/share/pnpm"
+export PATH="$PNPM_HOME/bin:$PATH"
+[ -x "$PNPM_HOME/bin/pi" ] || pnpm add -g --ignore-scripts @earendil-works/pi-coding-agent
+
+# codex via bun, nicht via pnpm: pnpm v11 sperrt Versionen die ersten 24h nach
+# Release (minimumReleaseAge). Codex released fast taeglich und startet bei
+# Versionsrueckstand seinen Selbst-Updater -> pnpm liefert wieder die alte
+# Version -> Endlosschleife. bun kennt diese Sperre nicht.
+[ -x "$HOME/.bun/bin/codex" ] || "$HOME/.bun/bin/bun" add -g @openai/codex
+
 # --- stow: Symlinks für alle Pakete (aktuell nur shell/) ---
 # vorhandene echte Dateien wegsichern, sonst verweigert stow den Link
 for f in .bashrc .profile; do
