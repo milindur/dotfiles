@@ -1,0 +1,6 @@
+pdf-engine: xelatex
+variables:
+  fontsize: 11pt
+  mainfont: XCharter
+  geometry: margin=2cm
+  papersize: a4

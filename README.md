@@ -13,7 +13,41 @@ cd ~/.dotfiles
 
 Das Skript installiert Homebrew, falls `brew` fehlt. Homebrew installiert `stow`, `direnv`, `gh` und `starship`. Unter macOS installiert das Skript außerdem Oh My Zsh. Der unbeaufsichtigte Installer ändert weder die Login-Shell noch die versionierte `.zshrc`. Die plattformunabhängigen Installer richten Herdr, uv, Rust, fnm mit Node.js, pnpm und Bun ein. pi und Codex werden als globale JavaScript-Pakete installiert.
 
-Der Installer verlinkt `.zprofile`, `.zshrc`, `.profile`, `.bashrc` und die gemeinsamen Aliase mit GNU Stow. Er verschiebt vorhandene Shell-Dateien in Sicherungen wie `.zshrc.pre-stow`. Öffne nach der Installation ein neues Terminal.
+Der Installer verlinkt `.zprofile`, `.zshrc`, `.profile`, `.bashrc`, `.vimrc`, die gemeinsame Git-Konfiguration, die gemeinsamen Aliase und das Verzeichnis `.pandoc/defaults` mit GNU Stow. Er verschiebt vorhandene Dateien und Verzeichnisse in Sicherungen wie `.zshrc.pre-stow` oder `defaults.pre-stow`. Öffne nach der Installation ein neues Terminal.
+
+## Pandoc-Defaults
+
+Pandoc-Defaults liegen unter `pandoc/.pandoc/defaults/`. Lege weitere YAML-Dateien in diesem Verzeichnis ab; durch den Stow-Link sind sie zugleich unter `~/.pandoc/defaults/` verfügbar.
+
+## Git-Identität
+
+Die versionierte Git-Konfiguration liegt unter `git/.config/git/config`. Sie enthält gemeinsame Einstellungen und den Namen, aber keine E-Mail-Adresse und keine Credential-Helper. Git lädt zusätzlich die rechnerlokale Datei `~/.gitconfig`.
+
+Auf dem Firmen-Laptop reicht die Firmenadresse als Standard:
+
+```gitconfig
+[user]
+    email = vorname.nachname@firma.example
+```
+
+Auf privaten Geräten bleibt die private Adresse der Standard. Eine bedingte Konfiguration wählt für alle Repositories unter `~/work/` die Firmenadresse:
+
+```gitconfig
+# ~/.gitconfig
+[user]
+    email = privat@example.net
+
+[includeIf "gitdir:~/work/"]
+    path = ~/.gitconfig-work
+```
+
+```gitconfig
+# ~/.gitconfig-work
+[user]
+    email = vorname.nachname@firma.example
+```
+
+Passe `~/work/` an das Verzeichnis deiner Firmen-Repositories an. Git wendet die Regel auch auf Unterverzeichnisse an. Für einen einzelnen Sonderfall überschreibt `git config user.email vorname.nachname@firma.example` die globale Auswahl nur im aktuellen Repository. Mit `git config user.email` prüfst du vor dem ersten Commit die wirksame Adresse. `user.useConfigOnly = true` verhindert, dass Git bei fehlender Adresse eine automatisch abgeleitete Identität verwendet.
 
 ## Lokale Werte übernehmen
 

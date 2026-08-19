@@ -125,22 +125,30 @@ export PATH="$PNPM_HOME/bin:$PATH"
 # Version -> Endlosschleife. bun kennt diese Sperre nicht.
 [ -x "$HOME/.bun/bin/codex" ] || "$HOME/.bun/bin/bun" add -g @openai/codex
 
-# --- stow: Symlinks fuer alle Pakete (aktuell nur shell/) ---
+# --- stow: Symlinks fuer alle Konfigurationspakete ---
 # Vorhandene Dateien und fremde Symlinks sichern, sonst verweigert stow den Link.
-for f in .bashrc .profile .zprofile .zshrc; do
-    if { [ -e "$HOME/$f" ] || [ -L "$HOME/$f" ]; } \
-        && ! [ "$HOME/$f" -ef "$PWD/shell/$f" ]; then
-        backup="$HOME/$f.pre-stow"
+for source in \
+    git/.config/git/config \
+    pandoc/.pandoc/defaults \
+    shell/.bashrc \
+    shell/.profile \
+    shell/.zprofile \
+    shell/.zshrc \
+    vim/.vimrc; do
+    target=${source#*/}
+    if { [ -e "$HOME/$target" ] || [ -L "$HOME/$target" ]; } \
+        && ! [ "$HOME/$target" -ef "$PWD/$source" ]; then
+        backup="$HOME/$target.pre-stow"
         suffix=1
         while [ -e "$backup" ]; do
-            backup="$HOME/$f.pre-stow.$suffix"
+            backup="$HOME/$target.pre-stow.$suffix"
             suffix=$((suffix + 1))
         done
-        mv "$HOME/$f" "$backup"
-        echo "$HOME/$f gesichert als $backup"
+        mv "$HOME/$target" "$backup"
+        echo "$HOME/$target gesichert als $backup"
     fi
 done
-stow -R -t "$HOME" shell
+stow -R -t "$HOME" git shell vim pandoc
 
 # Oh My Zsh erst nach stow installieren. So findet der Installer bereits die
 # versionierte .zshrc und legt keine eigene Konfiguration an.

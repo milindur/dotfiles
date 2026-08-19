@@ -1,0 +1,19 @@
+[user]
+	name = Christian Andersen
+	useConfigOnly = true
+[pull]
+	rebase = true
+[gui]
+	pruneDuringFetch = true
+[smartgit "submodule"]
+	fetchAlways = false
+	update = true
+	initializeNew = true
+[push]
+	recurseSubmodules = check
+[gc]
+	autoDetach = false
+[init]
+	defaultBranch = main
+[commit]
+	gpgSign = false
