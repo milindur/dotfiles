@@ -45,11 +45,6 @@ fi
 # colored GCC warnings and errors
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# some more ls aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-
 # enable programmable completion features
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
@@ -63,11 +58,7 @@ if [ -r "$HOME/.dotfiles/.local/bash_aliases.sh" ]; then
   source "$HOME/.dotfiles/.local/bash_aliases.sh"
 fi
 
-#alias ssh='ssh.exe'
-#alias ssh-add='ssh-add.exe'
-
-alias claude='claude --allow-dangerously-skip-permissions --strict-mcp-config'
-alias codex='codex --yolo'
+[ -r "$HOME/.config/shell/aliases.sh" ] && . "$HOME/.config/shell/aliases.sh"
 
 command -v starship >/dev/null && eval "$(starship init bash)"
 command -v direnv >/dev/null && eval "$(direnv hook bash)"
