@@ -105,6 +105,10 @@ fnm install --lts
 command -v pnpm >/dev/null || corepack enable pnpm
 
 # --- bun: BUN_INSTALL ist in .profile schon gesetzt ---
+# Das Verzeichnis vorher anlegen: "bun completions" schreibt die Bash-Completion
+# in das erste existierende Verzeichnis seiner Kandidatenliste und tut sonst
+# nichts. .bashrc sourct das Verzeichnis.
+mkdir -p "$HOME/.bash_completion.d"
 if [ ! -x "$HOME/.bun/bin/bun" ]; then
     curl -fsSL https://bun.sh/install | bash
 fi

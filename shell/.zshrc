@@ -37,3 +37,9 @@ fi
 
 command -v starship >/dev/null && eval "$(starship init zsh)"
 command -v direnv >/dev/null && eval "$(direnv hook zsh)"
+
+# Die naechste Kommentarzeile muss exakt so stehen bleiben: "bun completions"
+# (laeuft bei bun install und bun upgrade) erkennt sie und haengt die Zeile
+# dann nicht erneut mit absolutem Pfad an.
+# bun completions
+[ -s "${BUN_INSTALL:-$HOME/.bun}/_bun" ] && source "${BUN_INSTALL:-$HOME/.bun}/_bun"

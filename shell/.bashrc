@@ -60,5 +60,16 @@ fi
 
 [ -r "$HOME/.config/shell/aliases.sh" ] && . "$HOME/.config/shell/aliases.sh"
 
+# bun drops its bash completion into the first existing directory of its
+# candidate list; ~/.bash_completion.d is the portable one, but neither bash nor
+# the bash-completion package sources that directory on its own. Unlike the zsh
+# path, bun never appends anything to this file.
+if [ -d "$HOME/.bash_completion.d" ]; then
+  for _completion in "$HOME"/.bash_completion.d/*.bash; do
+    [ -r "$_completion" ] && . "$_completion"
+  done
+  unset _completion
+fi
+
 command -v starship >/dev/null && eval "$(starship init bash)"
 command -v direnv >/dev/null && eval "$(direnv hook bash)"
