@@ -9,16 +9,17 @@
 #      sops updatekeys secrets/<datei>.env
 keys:
   - &pc age1xnmu0j7yxqumsamyvqna3wu2njg8lyd5phwmsnltuj9w4nsgu4cq3myc4r
+  - &mac age1gsgta3k9vle553vpf49pekdqjzuut5f297pldjpckm76e74lfg5smaswrm
 creation_rules:
   - path_regex: secrets/pc\.env$
     key_groups:
       - age: [*pc]
-  # - path_regex: secrets/mac\.env$
-  #   key_groups:
-  #     - age: [*mac]
+  - path_regex: secrets/mac\.env$
+    key_groups:
+      - age: [*mac]
   # - path_regex: secrets/work\.env$
   #   key_groups:
   #     - age: [*work]
   - path_regex: secrets/common\.env$
     key_groups:
-      - age: [*pc]
+      - age: [*pc, *mac]
