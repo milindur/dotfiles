@@ -1,8 +1,9 @@
 # Laedt sops/age-verschluesselte API-Keys aus dem Dotfiles-Repo.
 # Die Weiche ist ~/.dotfiles/.local/secrets-env: eine Zeile mit dem
 # Umgebungsnamen (pc, mac oder work). Geladen werden secrets/common.env
-# (falls vorhanden) und secrets/<umgebung>.env. Ohne sops, ohne
-# age-Schluessel oder ohne Weiche passiert nichts.
+# (falls vorhanden), auf privaten Umgebungen secrets/private.env und
+# zuletzt secrets/<umgebung>.env. Ohne sops, ohne age-Schluessel oder
+# ohne Weiche passiert nichts.
 dotfiles_load_secrets() {
   _dotfiles="$HOME/.dotfiles"
 
@@ -19,7 +20,14 @@ dotfiles_load_secrets() {
   fi
   read -r _secrets_env < "$_dotfiles/.local/secrets-env"
 
-  for _secrets_file in "$_dotfiles/secrets/common.env" "$_dotfiles/secrets/$_secrets_env.env"; do
+  # private.env teilen sich die privaten Umgebungen; work kann sie
+  # ohnehin nicht entschluesseln, also gar nicht erst versuchen.
+  _secrets_private=""
+  case "$_secrets_env" in
+    pc|mac) _secrets_private="$_dotfiles/secrets/private.env" ;;
+  esac
+
+  for _secrets_file in "$_dotfiles/secrets/common.env" $_secrets_private "$_dotfiles/secrets/$_secrets_env.env"; do
     [ -f "$_secrets_file" ] || continue
     if _secrets_plain="$(sops -d "$_secrets_file" 2>/dev/null)"; then
       set -a
@@ -32,4 +40,4 @@ dotfiles_load_secrets() {
 }
 dotfiles_load_secrets
 unset -f dotfiles_load_secrets
-unset _dotfiles _secrets_env _secrets_file _secrets_plain
+unset _dotfiles _secrets_env _secrets_private _secrets_file _secrets_plain

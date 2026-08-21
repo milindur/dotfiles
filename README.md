@@ -21,11 +21,11 @@ Pandoc-Defaults liegen unter `pandoc/.pandoc/defaults/`. Lege weitere YAML-Datei
 
 ## API-Keys (sops + age)
 
-API-Keys liegen verschlüsselt im Repo unter `secrets/` als dotenv-Dateien, eine je Umgebung: `pc.env` (privater PC), `mac.env`, `work.env` (Firmen-Laptop), optional `common.env` für alle. sops verschlüsselt nur die Werte; welche Variablen es gibt, bleibt im Diff sichtbar.
+API-Keys liegen verschlüsselt im Repo unter `secrets/` als dotenv-Dateien, eine je Umgebung: `pc.env` (privater PC), `mac.env`, `work.env` (Firmen-Laptop), dazu `private.env` für alle privaten Rechner und `common.env` für alle inklusive Firmen-Laptop. sops verschlüsselt nur die Werte; welche Variablen es gibt, bleibt im Diff sichtbar.
 
 Jeder Rechner hat einen eigenen age-Schlüssel unter `~/.config/sops/age/keys.txt`. `install.sh` erzeugt ihn beim ersten Lauf und gibt den Public Key aus. Der private Schlüssel verlässt den Rechner nie; ohne ihn sind die Dateien wertlos.
 
-Die Weiche ist `.local/secrets-env` (nicht versioniert): eine Zeile mit dem Umgebungsnamen, z.B. `pc`. `.profile` entschlüsselt beim Login `common.env` und `<umgebung>.env` und exportiert die Variablen. Fehlt sops, der Schlüssel oder die Weiche, startet die Shell normal, nur ohne Keys.
+Die Weiche ist `.local/secrets-env` (nicht versioniert): eine Zeile mit dem Umgebungsnamen, z.B. `pc`. `.profile` entschlüsselt beim Login `common.env`, bei `pc` und `mac` zusätzlich `private.env` und zuletzt `<umgebung>.env` und exportiert die Variablen. Fehlt sops, der Schlüssel oder die Weiche, startet die Shell normal, nur ohne Keys.
 
 Bearbeiten (öffnet den Editor mit Klartext, verschlüsselt beim Speichern):
 

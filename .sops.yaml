@@ -17,6 +17,9 @@ creation_rules:
   - path_regex: secrets/mac\.env$
     key_groups:
       - age: [*mac]
+  - path_regex: secrets/private\.env$
+    key_groups:
+      - age: [*pc, *mac]
   # - path_regex: secrets/work\.env$
   #   key_groups:
   #     - age: [*work]
