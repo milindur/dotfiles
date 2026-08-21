@@ -1,0 +1,24 @@
+# Empfaenger je Umgebung (age Public Keys der Rechner).
+# Neuen Rechner aufnehmen:
+#   1. ./install.sh auf dem Rechner ausfuehren; es erzeugt den age-Schluessel
+#      und gibt den Public Key aus.
+#   2. Public Key hier als Anker ergaenzen und in die passenden Regeln
+#      eintragen (z.B. mac.env nur fuer den Mac, work.env nur fuer den
+#      Firmen-Laptop, common.env fuer alle).
+#   3. Auf einem Rechner, der die Datei entschluesseln kann:
+#      sops updatekeys secrets/<datei>.env
+keys:
+  - &pc age1xnmu0j7yxqumsamyvqna3wu2njg8lyd5phwmsnltuj9w4nsgu4cq3myc4r
+creation_rules:
+  - path_regex: secrets/pc\.env$
+    key_groups:
+      - age: [*pc]
+  # - path_regex: secrets/mac\.env$
+  #   key_groups:
+  #     - age: [*mac]
+  # - path_regex: secrets/work\.env$
+  #   key_groups:
+  #     - age: [*work]
+  - path_regex: secrets/common\.env$
+    key_groups:
+      - age: [*pc]

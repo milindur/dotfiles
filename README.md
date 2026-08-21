@@ -19,6 +19,29 @@ Der Installer verlinkt `.zprofile`, `.zshrc`, `.profile`, `.bashrc`, `.vimrc`, d
 
 Pandoc-Defaults liegen unter `pandoc/.pandoc/defaults/`. Lege weitere YAML-Dateien in diesem Verzeichnis ab; durch den Stow-Link sind sie zugleich unter `~/.pandoc/defaults/` verfügbar.
 
+## API-Keys (sops + age)
+
+API-Keys liegen verschlüsselt im Repo unter `secrets/` als dotenv-Dateien, eine je Umgebung: `pc.env` (privater PC), `mac.env`, `work.env` (Firmen-Laptop), optional `common.env` für alle. sops verschlüsselt nur die Werte; welche Variablen es gibt, bleibt im Diff sichtbar.
+
+Jeder Rechner hat einen eigenen age-Schlüssel unter `~/.config/sops/age/keys.txt`. `install.sh` erzeugt ihn beim ersten Lauf und gibt den Public Key aus. Der private Schlüssel verlässt den Rechner nie; ohne ihn sind die Dateien wertlos.
+
+Die Weiche ist `.local/secrets-env` (nicht versioniert): eine Zeile mit dem Umgebungsnamen, z.B. `pc`. `.profile` entschlüsselt beim Login `common.env` und `<umgebung>.env` und exportiert die Variablen. Fehlt sops, der Schlüssel oder die Weiche, startet die Shell normal, nur ohne Keys.
+
+Bearbeiten (öffnet den Editor mit Klartext, verschlüsselt beim Speichern):
+
+```bash
+sops secrets/pc.env
+```
+
+Neuen Rechner aufnehmen:
+
+1. `./install.sh` ausführen, ausgegebenen Public Key kopieren.
+2. Public Key in `.sops.yaml` als Anker ergänzen und in die Regeln der Dateien eintragen, die der Rechner lesen soll.
+3. Auf einem bereits berechtigten Rechner `sops updatekeys secrets/<datei>.env` ausführen und committen.
+4. Auf dem neuen Rechner `.local/secrets-env` anlegen.
+
+Eine Datei kann nur bearbeiten, wessen Schlüssel als Empfänger eingetragen ist. `work.env` ist daher bewusst nur für den Firmen-Laptop lesbar, private Keys bleiben dem Firmengerät verborgen und umgekehrt.
+
 ## Git-Identität
 
 Die versionierte Git-Konfiguration liegt unter `git/.config/git/config`. Sie enthält gemeinsame Einstellungen und den Namen, aber keine E-Mail-Adresse und keine Credential-Helper. Git lädt zusätzlich die rechnerlokale Datei `~/.gitconfig`.

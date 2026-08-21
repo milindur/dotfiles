@@ -16,6 +16,7 @@ case "$(uname -s)" in
         command -v stow   >/dev/null || need_apt+=(stow)
         command -v direnv >/dev/null || need_apt+=(direnv)
         command -v curl   >/dev/null || need_apt+=(curl)
+        command -v age    >/dev/null || need_apt+=(age)
         if [ ${#need_apt[@]} -gt 0 ]; then
             sudo apt-get update
             sudo apt-get install -y "${need_apt[@]}"
@@ -37,6 +38,15 @@ case "$(uname -s)" in
         if ! command -v starship >/dev/null; then
             mkdir -p "$HOME/.local/bin"
             curl -sS https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin"
+        fi
+
+        # sops: kein brauchbares apt-Paket, Binary von GitHub nach ~/.local/bin.
+        if ! command -v sops >/dev/null; then
+            sops_version=3.13.3
+            mkdir -p "$HOME/.local/bin"
+            curl -fsSL -o "$HOME/.local/bin/sops" \
+                "https://github.com/getsops/sops/releases/download/v${sops_version}/sops-v${sops_version}.linux.$(dpkg --print-architecture)"
+            chmod +x "$HOME/.local/bin/sops"
         fi
         ;;
     Darwin)
@@ -65,6 +75,8 @@ case "$(uname -s)" in
         command -v direnv   >/dev/null || need_brew+=(direnv)
         command -v gh       >/dev/null || need_brew+=(gh)
         command -v starship >/dev/null || need_brew+=(starship)
+        command -v sops     >/dev/null || need_brew+=(sops)
+        command -v age      >/dev/null || need_brew+=(age)
         if [ ${#need_brew[@]} -gt 0 ]; then
             brew install "${need_brew[@]}"
         fi
@@ -128,6 +140,20 @@ export PATH="$PNPM_HOME/bin:$PATH"
 # Versionsrueckstand seinen Selbst-Updater -> pnpm liefert wieder die alte
 # Version -> Endlosschleife. bun kennt diese Sperre nicht.
 [ -x "$HOME/.bun/bin/codex" ] || "$HOME/.bun/bin/bun" add -g @openai/codex
+
+# --- age-Schluessel fuer die sops-Secrets (secrets/) ---
+sops_key="$HOME/.config/sops/age/keys.txt"
+if [ ! -f "$sops_key" ]; then
+    install -d -m 700 "$(dirname "$sops_key")"
+    age-keygen -o "$sops_key"
+    chmod 600 "$sops_key"
+    echo "Neuer age-Schluessel erzeugt. Public Key in .sops.yaml eintragen und"
+    echo "auf einem berechtigten Rechner 'sops updatekeys secrets/<datei>.env' ausfuehren:"
+    grep 'public key' "$sops_key"
+fi
+if [ ! -f .local/secrets-env ]; then
+    echo "Hinweis: .local/secrets-env fehlt (eine Zeile: pc, mac oder work); ohne sie laedt die Shell keine API-Keys."
+fi
 
 # --- stow: Symlinks fuer alle Konfigurationspakete ---
 # Vorhandene Dateien und fremde Symlinks sichern, sonst verweigert stow den Link.

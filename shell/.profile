@@ -58,6 +58,11 @@ if [ -d "$HOME/.lmstudio/bin" ] ; then
 fi
 export PATH
 
+# API-Keys: sops/age-verschluesselte Secrets aus dem Repo (siehe secrets/).
+if [ -r "$HOME/.config/shell/secrets.sh" ]; then
+  . "$HOME/.config/shell/secrets.sh"
+fi
+
 if [ -r "$HOME/.dotfiles/.local/profile.sh" ]; then
   . "$HOME/.dotfiles/.local/profile.sh"
 fi
